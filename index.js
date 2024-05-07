@@ -137,7 +137,7 @@ class TodoList extends Component {
               change: () => this.onCheckTask(todo.id),
             }),
             this.betterCreateElement("span", {}, todo.text),
-            this.betterCreateElement("button", null, "🗑", { click: () => this.onDeleteTask(todo.id) }),
+            this.betterCreateElement("button", {}, "🗑️", { click: () => this.onDeleteTask(todo.id) }),
           ]);
           
           if (todo.completed) {
@@ -155,3 +155,48 @@ class TodoList extends Component {
 document.addEventListener("DOMContentLoaded", () => {
   document.body.appendChild(new TodoList().getDomNode());
 });
+
+
+
+class AddTask extends Component {
+  constructor(onAddTask) {
+    super();
+    this.onAddTask = onAddTask;
+  }
+
+  render() {
+    return this.betterCreateElement("div", { class: "todo-list" }, [
+      this.betterCreateElement("h1", {}, "TODO List"),
+      new AddTask(this.onAddTask).getDomNode(),
+      this.betterCreateElement("ul", { id: "todos" }, [
+        ...self.state.todos.map((todo) => new Task(todo, this.onCheckTask, this.onDeleteTask).getDomNode()),
+      ])
+    ]);
+  }
+}
+
+
+class Task extends Component {
+  constructor(todo, onCheckTask, onDeleteTask) {
+    super();
+    this.todo = todo;
+    this.onCheckTask = onCheckTask;
+    this.onDeleteTask = onDeleteTask;
+  }
+
+  render() {
+    const listItem = this.betterCreateElement("li", { class: this.todo.completed ? "completed" : "" }, [
+      this.betterCreateElement("input", this.todo.completed ? { type: "checkbox", checked: "" } : { type: "checkbox" }, null, {
+        change: () => this.onCheckTask(this.todo.id),
+      }),
+      this.betterCreateElement("span", {}, this.todo.text),
+      this.betterCreateElement("button", {}, "🗑", { click: () => this.onDeleteTask(this.todo.id) }),
+    ]);
+
+    if (this.todo.completed) {
+      listItem.querySelector("span").classList.add("completed");
+    }
+
+    return listItem;
+  }
+}
