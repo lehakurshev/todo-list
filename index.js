@@ -45,17 +45,9 @@ class TodoList extends Component {
         { id: 3, text: "Пойти домой", completed: false },
       ],
     };
-  }
-
-
-  onAddTask() {
-    const input = document.getElementById("new-todo");
-    const text = input.value;
-
-    if (text) {
-      self.state.todos.push({ id: self.state.todos.length + 1, text, completed: false });
-      input.value = "";
-    }
+    self.update = this.update.bind(this);
+    self.render = this.render.bind(this);
+    self._domNode = this.render();
   }
 
   onAddInputChange(event) {
@@ -92,6 +84,23 @@ class TodoList extends Component {
     }
 
     return element;
+  }
+
+
+  update() {
+    self._domNode = self.render();
+    document.querySelector(".todo-list").innerHTML = self._domNode.innerHTML;
+  }
+
+  onAddTask() {
+    const input = document.getElementById("new-todo");
+    const text = input.value;
+
+    if (text) {
+      self.state.todos.push({ id: self.state.todos.length + 1, text, completed: false });
+      input.value = "";
+      self.update();
+    }
   }
 
   render() {
