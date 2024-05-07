@@ -42,7 +42,7 @@ class TodoList extends Component {
       todos: [
         { id: 1, text: "Сделать домашку", completed: false },
         { id: 2, text: "Сделать практику", completed: false },
-        { id: 3, text: "Пойти домой", completed: false },
+        { id: 3, text: "Пойти домой", completed: true },
       ],
     };
     self.update = this.update.bind(this);
@@ -98,6 +98,12 @@ class TodoList extends Component {
     document.body.append(self._domNode)
   }
 
+  onCheckTask(id) {
+    const todo = self.state.todos.find(todo => todo.id === id);
+    todo.completed = !todo.completed;
+    self.update();
+  }
+
   onAddTask() {
     const input = document.getElementById("new-todo");
     const text = input.value;
@@ -127,7 +133,9 @@ class TodoList extends Component {
       this.betterCreateElement("ul", { id: "todos" }, [
         ...self.state.todos.map((todo) => {
           const listItem = this.betterCreateElement("li", { class: todo.completed ? "completed" : "" }, [
-            this.betterCreateElement("input", { type: "checkbox", checked: todo.completed }),
+            this.betterCreateElement("input", todo.completed ? { type: "checkbox", checked: "" } : { type: "checkbox" }, null, {
+              change: () => this.onCheckTask(todo.id),
+            }),
             this.betterCreateElement("span", {}, todo.text),
             this.betterCreateElement("button", null, "🗑", { click: () => this.onDeleteTask(todo.id) }),
           ]);
