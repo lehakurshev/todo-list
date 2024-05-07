@@ -54,6 +54,11 @@ class TodoList extends Component {
     self.state.input = event.target.value;
   }
 
+  onDeleteTask(id) {
+    self.state.todos = self.state.todos.filter(todo => todo.id !== id);
+    self.update();
+  }
+
   betterCreateElement(tag, attributes, children, callbacks) {
     const element = document.createElement(tag);
 
@@ -120,13 +125,21 @@ class TodoList extends Component {
       ]),
       this.betterCreateElement("ul", { id: "todos" }, [
         ...self.state.todos.map((todo) => {
-          return this.betterCreateElement("li", { class: todo.completed ? "completed" : "" }, [
+          const listItem = this.betterCreateElement("li", { class: todo.completed ? "completed" : "" }, [
             this.betterCreateElement("input", { type: "checkbox", checked: todo.completed }),
             this.betterCreateElement("span", {}, todo.text),
+            this.betterCreateElement("button", { onclick: () => this.onDeleteTask(todo.id) }, "🗑"),
           ]);
+          
+          if (todo.completed) {
+            listItem.querySelector("span").classList.add("completed");
+          }
+      
+          return listItem;
         }),
-      ]),
+      ])
     ]);
+    
   }
 }
 
