@@ -40,9 +40,9 @@ class TodoList extends Component {
     self.state = {
       input: "",
       todos: [
-        { id: 1, text: "Сделать домашку", completed: false },
-        { id: 2, text: "Сделать практику", completed: false },
-        { id: 3, text: "Пойти домой", completed: true },
+        { id: 1, text: "Сделать домашку", completed: false, deleteCount: 0},
+        { id: 2, text: "Сделать практику", completed: false, deleteCount: 0 },
+        { id: 3, text: "Пойти домой", completed: true, deleteCount: 0 },
       ],
     };
     self.update = this.update.bind(this);
@@ -54,8 +54,13 @@ class TodoList extends Component {
     self.state.input = event.target.value;
   }
 
-  onDeleteTask(id) {
-    self.state.todos = self.state.todos.filter(todo => todo.id !== id);
+  onDeleteTask(id, count) {
+    const todo = self.state.todos.find(todo => todo.id === id);
+    todo.deleteCount++;
+    if (todo.deleteCount === 2) {
+      const index = self.state.todos.findIndex(todo => todo.id === id);
+      self.state.todos.splice(index, 1);
+    }
     self.update();
   }
 
@@ -137,7 +142,7 @@ class TodoList extends Component {
               change: () => this.onCheckTask(todo.id),
             }),
             this.betterCreateElement("span", {}, todo.text),
-            this.betterCreateElement("button", {}, "🗑️", { click: () => this.onDeleteTask(todo.id) }),
+            this.betterCreateElement("button", todo.deleteCount === 1 ? {class: 'deleting'} : {}, "🗑️", { click: () => this.onDeleteTask(todo.id, todo.deleteCount) }),
           ]);
           
           if (todo.completed) {
@@ -190,7 +195,7 @@ class Task extends Component {
         change: () => this.onCheckTask(this.todo.id),
       }),
       this.betterCreateElement("span", {}, this.todo.text),
-      this.betterCreateElement("button", {}, "🗑", { click: () => this.onDeleteTask(this.todo.id) }),
+      this.betterCreateElement("button", {}, "🗑", { click: () => this.onDeleteTask(this.todo.id, this.todo.deleteCount) }),
     ]);
 
     if (this.todo.completed) {

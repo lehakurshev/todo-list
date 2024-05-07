@@ -63,4 +63,7 @@ button {
 .completed {
     color: grey;
 }
-  
+
+.deleting {
+    background-color: red;
+}
