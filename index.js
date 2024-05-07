@@ -94,7 +94,8 @@ class TodoList extends Component {
 
   update() {
     self._domNode = self.render();
-    document.querySelector(".todo-list").innerHTML = self._domNode.innerHTML;
+    document.querySelector(".todo-list").remove();
+    document.body.append(self._domNode)
   }
 
   onAddTask() {
@@ -128,7 +129,7 @@ class TodoList extends Component {
           const listItem = this.betterCreateElement("li", { class: todo.completed ? "completed" : "" }, [
             this.betterCreateElement("input", { type: "checkbox", checked: todo.completed }),
             this.betterCreateElement("span", {}, todo.text),
-            this.betterCreateElement("button", { onclick: () => this.onDeleteTask(todo.id) }, "🗑"),
+            this.betterCreateElement("button", null, "🗑", { click: () => this.onDeleteTask(todo.id) }),
           ]);
           
           if (todo.completed) {
