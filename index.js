@@ -37,7 +37,7 @@ class Component {
 class TodoList extends Component {
   constructor() {
     super();
-    self.state = {
+    self.state = this.loadState() || {
       input: "",
       todos: [
         { id: 1, text: "Сделать домашку", completed: false, deleteCount: 0},
@@ -47,11 +47,26 @@ class TodoList extends Component {
     };
     self.update = this.update.bind(this);
     self.render = this.render.bind(this);
+    self.loadState = this.loadState.bind(this);
+    self.saveState = this.saveState.bind(this);
     self._domNode = this.render();
+  }
+
+  saveState(state) {
+    localStorage.setItem('todoState', JSON.stringify(state));
+  }
+
+  loadState() {
+    const stateString = localStorage.getItem('todoState');
+    if (stateString === 'undefined'){
+      return null;
+    }
+    return JSON.parse(stateString);
   }
 
   onAddInputChange(event) {
     self.state.input = event.target.value;
+    self.saveState(self.state);
   }
 
   onDeleteTask(id, count) {
@@ -61,6 +76,7 @@ class TodoList extends Component {
       const index = self.state.todos.findIndex(todo => todo.id === id);
       self.state.todos.splice(index, 1);
     }
+    self.saveState(self.state);
     self.update();
   }
 
@@ -106,6 +122,7 @@ class TodoList extends Component {
   onCheckTask(id) {
     const todo = self.state.todos.find(todo => todo.id === id);
     todo.completed = !todo.completed;
+    self.saveState(self.state);
     self.update();
   }
 
@@ -116,6 +133,7 @@ class TodoList extends Component {
     if (text) {
       self.state.todos.push({ id: self.state.todos.length + 1, text, completed: false });
       input.value = "";
+      self.saveState(self.state);
       self.update();
     }
   }
